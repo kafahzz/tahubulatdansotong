@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tahu Bulat & Sotong Crispy - Pesan Online</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Plus Jakarta Sans & Fredoka -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Fredoka', 'cursive'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fffbe3',
+                            100: '#fff3b8',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #fffbeb 0%, #fff7ed 50%, #fef2f2 100%);
+            min-height: 100vh;
+        }
+
+        .font-display {
+            font-family: 'Fredoka', cursive;
+        }
+
+        /* Flying item animation to cart */
+        .flying-item {
+            position: fixed;
+            z-index: 9999;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.5);
+            border: 3px solid #ffffff;
+        }
+
+        @keyframes bump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.35) rotate(-10deg); }
+            100% { transform: scale(1); }
+        }
+        .animate-bump {
+            animation: bump 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.03); }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fef3c7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f59e0b;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d97706;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between selection:bg-amber-300">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-amber-100 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-orange-200 transform hover:rotate-6 transition-transform">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div>
+                    <h1 class="font-display font-bold text-slate-900 text-xl tracking-wide leading-none">
+                        Tahu Bulat <span class="text-orange-500">& Sotong</span>
+                    </h1>
+                    <p class="text-xs text-amber-600 font-semibold tracking-wide">🔥 Crispy, Gurih & Lezat</p>
+                </div>
+            </div>
+
+            <!-- Floating Cart Trigger Button -->
+            <button id="cartBtn" onclick="openCheckoutModal()" class="relative bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white p-2.5 px-5 rounded-2xl font-bold shadow-lg shadow-orange-200 transition-all active:scale-95 flex items-center gap-2">
+                <i class="fa-solid fa-basket-shopping text-lg"></i>
+                <span class="hidden sm:inline font-display text-sm tracking-wide">Keranjang</span>
+                <span id="cartBadge" class="bg-red-500 border-2 border-white text-white text-xs font-extrabold px-2 py-0.5 rounded-full shadow-sm">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto px-4 py-6 w-full space-y-8">
+
+        <!-- Banner Greeting & Name Input -->
+        <section class="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-orange-200/50 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute right-1/3 -top-10 w-32 h-32 bg-yellow-300/20 rounded-full blur-xl pointer-events-none"></div>
+            
+            <div class="relative z-10 space-y-4">
+                <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase border border-white/20">
+                    <span>✨ Jajanan Hits Kekinian</span>
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-display font-extrabold tracking-wide text-white drop-shadow-sm">
+                    Pesan Online Langsung Digoreng Mendadak! 🎉
+                </h2>
+                <p class="text-amber-50 text-sm max-w-xl leading-relaxed">
+                    Pilih tahu bulat renyah atau sotong gurih favoritmu. Tambahkan bumbu tabur sepuasnya, glaze manis, dan topping melimpah!
+                </p>
+                
+                <!-- Input Nama Pembeli -->
+                <div class="pt-2 max-w-md">
+                    <label for="customerNameInput" class="block text-xs font-extrabold uppercase tracking-wider mb-1.5 text-amber-100 flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-pen"></i> Nama Pemesan <span class="text-red-300">*</span>
+                    </label>
+                    <div class="relative">
+                        <i class="fa-solid fa-signature absolute left-4 top-1/2 -translate-y-1/2 text-amber-500 font-bold"></i>
+                        <input type="text" id="customerNameInput" placeholder="Ketik nama kamu di sini..." 
+                            class="w-full pl-11 pr-4 py-3 rounded-2xl text-slate-800 placeholder-slate-400 bg-white shadow-md focus:outline-none focus:ring-4 focus:ring-amber-300/50 font-bold text-sm transition-all">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Catalog Section -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between border-b border-amber-200/60 pb-3">
+                <h3 class="text-2xl font-display font-bold text-slate-900 flex items-center gap-2">
+                    <span class="text-2xl">🍢</span> Menu Jualan Kami
+                </h3>
+                <span class="text-xs font-bold text-amber-700 bg-amber-100 px-3 py-1 rounded-full">
+                    Klik & Pilih Varian
+                </span>
+            </div>
+
+            <!-- Grid Menu -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- MENU 1: TAHU BULAT -->
+                <div class="bg-white rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-amber-100 overflow-hidden flex flex-col justify-between group">
+                    <div>
+                        <div class="relative h-56 bg-amber-50 overflow-hidden">
+                            <img id="img-tahu" src="https://i.ibb.co.com/ksQqzmVg/IMG-20261003-WA0035.webp" alt="Tahu Bulat" 
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                 onerror="this.src='https://placehold.co/600x400/f59e0b/ffffff?text=Tahu+Bulat'">
+                            <span class="absolute top-4 left-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-display font-bold text-xs px-3.5 py-1.5 rounded-full shadow-lg">
+                                🔥 Best Seller
+                            </span>
+                        </div>
+                        <div class="p-5 space-y-3">
+                            <h4 class="text-xl font-display font-bold text-slate-900">Tahu Bulat Crispy</h4>
+                            <p class="text-slate-500 text-xs leading-relaxed">
+                                Tahu bulat hangat, mekar, renyah di luar dan lembut di dalam. Sangat pas ditaburi bumbu gurih pedas atau saus mentai!
+                            </p>
+                            <div class="space-y-1.5 pt-1">
+                                <span class="text-xs font-bold text-slate-400 block">Pilihan Varian Rasa:</span>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <span class="bg-red-50 text-red-600 border border-red-200 text-[11px] font-bold px-2.5 py-0.5 rounded-lg">🌶️ Pedas</span>
+                                    <span class="bg-orange-50 text-orange-600 border border-orange-200 text-[11px] font-bold px-2.5 py-0.5 rounded-lg">🌶️ Balado</span>
+                                    <span class="bg-yellow-50 text-yellow-700 border border-yellow-200 text-[11px] font-bold px-2.5 py-0.5 rounded-lg">🌽 Jagung Bakar</span>
+                                    <span class="bg-blue-50 text-blue-600 border border-blue-200 text-[11px] font-bold px-2.5 py-0.5 rounded-lg">🧂 Asin</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <button onclick="openCustomizeModal('tahu')" 
+                            class="w-full bg-gradient-to-r from-slate-900 to-slate-800 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-3 px-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 shadow-md active:scale-95 text-sm">
+                            <i class="fa-solid fa-plus text-amber-400"></i> Pilih Varian & Tambah
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MENU 2: SOTONG -->
+                <div class="bg-white rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-amber-100 overflow-hidden flex flex-col justify-between group">
+                    <div>
+                        <div class="relative h-56 bg-orange-50 overflow-hidden">
+                            <img id="img-sotong" src="https://i.ibb.co.com/xqVM5gCq/IMG-20261003-WA0034.webp" alt="Sotong" 
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                 onerror="this.src='https://placehold.co/600x400/d97706/ffffff?text=Sotong'">
+                            <span class="absolute top-4 left-4 bg-gradient-to-r from-orange-500 to-rose-500 text-white font-display font-bold text-xs px-3.5 py-1.5 rounded-full shadow-lg">
+                                🌟 Super Favorit
+                            </span>
+                        </div>
+                        <div class="p-5 space-y-3">
+                            <h4 class="text-xl font-display font-bold text-slate-900">Sotong Gurih</h4>
+                            <p class="text-slate-500 text-xs leading-relaxed">
+                                Sotong goreng kenyal gurih. Nikmati dengan aneka rasa Glaze manis lumer serta topping mesos/keju yang melimpah!
+                            </p>
+                            <div class="space-y-1.5 pt-1">
+                                <span class="text-xs font-bold text-slate-400 block">Pilihan Varian Glaze & Topping:</span>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <span class="bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-bold px-2.5 py-0.5 rounded-lg">☕ Tiramisu</span>
+                                    <span class="bg-amber-900/10 text-amber-900 border border-amber-300 text-[11px] font-bold px-2.5 py-0.5 rounded-lg">🍫 Coklat</span>
+                                    <span class="bg-purple-50 text-purple-600 border border-purple-200 text-[11px] font-bold px-2.5 py-0.5 rounded-lg">🧋 Taro</span>
+                                    <span class="bg-emerald-50 text-emerald-600 border border-emerald-200 text-[11px] font-bold px-2.5 py-0.5 rounded-lg">🍵 Matcha</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <button onclick="openCustomizeModal('sotong')" 
+                            class="w-full bg-gradient-to-r from-slate-900 to-slate-800 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-3 px-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 shadow-md active:scale-95 text-sm">
+                            <i class="fa-solid fa-plus text-amber-400"></i> Pilih Varian & Tambah
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-amber-100 mt-12 py-6">
+        <div class="max-w-4xl mx-auto px-4 text-center space-y-2">
+            <p class="font-display text-amber-600 font-bold text-sm">Tahu Bulat & Sotong Crispy Online Store</p>
+            <p class="text-xs text-slate-400">© 2026 Hak Cipta Dilindungi. Pesanan langsung dikirim ke WhatsApp resmi kami.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL CUSTOMIZE PRODUCT (Pilihan Toping & Paket) -->
+    <div id="customizeModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto p-6 space-y-5 shadow-2xl transform translate-y-full sm:translate-y-0 transition-transform duration-300 border border-amber-100">
+            
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <div>
+                    <h3 id="modalTitle" class="text-xl font-display font-bold text-slate-900">Atur Pesanan</h3>
+                    <p class="text-xs text-slate-400">Sesuaikan porsi, rasa, dan topping kesukaanmu</p>
+                </div>
+                <button onclick="closeCustomizeModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="customizeForm" onsubmit="event.preventDefault(); addToCart();">
+                <input type="hidden" id="modalProductType">
+
+                <!-- Option: Pilihan Porsi / Paket -->
+                <div class="space-y-2">
+                    <label class="block font-bold text-sm text-slate-800">1. Pilih Menu / Porsi <span class="text-red-500">*</span></label>
+                    <div id="portionOptions" class="space-y-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Option: Ekstra Add-ons / Toping -->
+                <div id="addonsContainer" class="space-y-3 pt-3 border-t border-slate-100">
+                    <label class="block font-bold text-sm text-slate-800">2. Pilihan Tambahan / Bumbu / Glaze / Topping</label>
+                    
+                    <div id="addonsList" class="space-y-3">
+                        <!-- Dynamic checkboxes for addons -->
+                    </div>
+                </div>
+
+                <!-- Catatan Khusus -->
+                <div class="pt-3 border-t border-slate-100">
+                    <label for="itemNote" class="block font-bold text-sm text-slate-800 mb-1">Catatan Khusus (Opsional)</label>
+                    <input type="text" id="itemNote" placeholder="Contoh: Bumbu dipisah, goreng agak garing..." 
+                        class="w-full text-xs p-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium">
+                </div>
+
+                <!-- Quantity & Price Summary -->
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 font-medium block">Total Harga Item</span>
+                        <span id="modalTotalPrice" class="text-2xl font-extrabold text-amber-600 font-display">Rp 0</span>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center bg-slate-100 rounded-2xl p-1 border border-slate-200">
+                            <button type="button" onclick="changeQty(-1)" class="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center font-bold text-slate-700 hover:bg-amber-100 active:scale-95 transition-all">-</button>
+                            <span id="modalQty" class="w-8 text-center font-bold text-slate-900 text-sm">1</span>
+                            <button type="button" onclick="changeQty(1)" class="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center font-bold text-slate-700 hover:bg-amber-100 active:scale-95 transition-all">+</button>
+                        </div>
+
+                        <button type="submit" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold px-5 py-3 rounded-2xl shadow-lg shadow-orange-200 transition-all active:scale-95 flex items-center gap-2 text-sm font-display">
+                            <i class="fa-solid fa-cart-plus"></i> + Keranjang
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL / HALAMAN CHECKOUT TERPISAH -->
+    <div id="checkoutModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300 p-3 sm:p-4">
+        <div class="bg-white w-full max-w-xl rounded-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-amber-100">
+            
+            <!-- Checkout Header -->
+            <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-amber-950 text-white p-5 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-500 flex items-center justify-center font-bold text-base shadow-md">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-bold text-xl leading-tight">Checkout Pesanan</h3>
+                        <p class="text-xs text-amber-200">Periksa detail pesanan sebelum dikirim ke WA</p>
+                    </div>
+                </div>
+                <button onclick="closeCheckoutModal()" class="w-8 h-8 rounded-full bg-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Checkout Body -->
+            <div class="p-5 overflow-y-auto space-y-5 flex-1 text-sm">
+                
+                <!-- Info Pemesan -->
+                <div class="bg-amber-50/60 p-4 rounded-2xl border border-amber-200/60 flex justify-between items-center">
+                    <div>
+                        <span class="text-xs text-amber-800 font-bold uppercase tracking-wider block">Nama Pemesan:</span>
+                        <span id="checkoutCustomerName" class="font-extrabold text-slate-900 text-base">-</span>
+                    </div>
+                    <button onclick="closeCheckoutModal(); document.getElementById('customerNameInput').focus();" class="text-xs bg-white text-amber-700 px-3 py-1.5 rounded-xl border border-amber-300 font-bold hover:bg-amber-100 transition-all">
+                        Ubah Nama
+                    </button>
+                </div>
+
+                <!-- Ringkasan Items -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-bag-shopping text-amber-500"></i> Ringkasan Belanja
+                    </h4>
+                    
+                    <div id="cartItemsList" class="space-y-2.5 divide-y divide-slate-100 max-h-52 overflow-y-auto pr-1">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Metode Pembayaran -->
+                <div class="space-y-3 pt-2">
+                    <h4 class="font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-credit-card text-amber-500"></i> Metode Pembayaran
+                    </h4>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="Tunai (Cash)" checked onchange="togglePaymentInfo()" class="peer hidden">
+                            <div class="p-3 border-2 border-slate-200 rounded-2xl text-center peer-checked:border-amber-500 peer-checked:bg-amber-50 transition-all">
+                                <i class="fa-solid fa-money-bill-wave text-amber-600 text-xl block mb-1"></i>
+                                <span class="font-bold text-xs text-slate-800 block">Tunai / COD</span>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="QRIS" onchange="togglePaymentInfo()" class="peer hidden">
+                            <div class="p-3 border-2 border-slate-200 rounded-2xl text-center peer-checked:border-amber-500 peer-checked:bg-amber-50 transition-all">
+                                <i class="fa-solid fa-qrcode text-amber-600 text-xl block mb-1"></i>
+                                <span class="font-bold text-xs text-slate-800 block">QRIS</span>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="Transfer Bank" onchange="togglePaymentInfo()" class="peer hidden">
+                            <div class="p-3 border-2 border-slate-200 rounded-2xl text-center peer-checked:border-amber-500 peer-checked:bg-amber-50 transition-all">
+                                <i class="fa-solid fa-building-columns text-amber-600 text-xl block mb-1"></i>
+                                <span class="font-bold text-xs text-slate-800 block">Transfer Bank</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Information detail payment -->
+                    <div id="paymentInstructions" class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 space-y-1">
+                        <p class="font-bold text-slate-900"><i class="fa-solid fa-circle-info text-amber-500 mr-1"></i> Petunjuk Pembayaran:</p>
+                        <p id="paymentTextDetail">Bayar tunai secara langsung saat menerima pesanan (COD / Ambil di tempat).</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Checkout Footer & Button -->
+            <div class="p-5 border-t border-slate-100 bg-slate-50 space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-500 font-bold">Total Pembayaran</span>
+                    <span id="checkoutGrandTotal" class="text-2xl font-extrabold text-amber-600 font-display">Rp 0</span>
+                </div>
+
+                <button onclick="sendOrderToWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-emerald-200 transition-all active:scale-95 flex items-center justify-center gap-2 text-base font-display">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i> Kirim Pesanan ke WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md text-white text-xs font-bold px-5 py-3 rounded-2xl shadow-2xl z-50 flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toastMessage">Item berhasil ditambahkan</span>
+    </div>
+
+    <script>
+        // =========================================================================
+        // === PETUNJUK UNTUK PENJUAL ===
+        // Ketik nomor WhatsApp Anda di dalam tanda kutip di bawah ini!
+        // Gunakan kode negara '62' di awal (tanpa tanda +, tanpa angka 0).
+        // Contoh: "6281234567890"
+        // =========================================================================
+        const NOMOR_WHATSAPP = "6281234567890"; // <-- SILAKAN GANTI DENGAN NOMOR WA AKU/KAMU DI SINI
+
+        // Data Katalog Menu Lengkap
+        const menuData = {
+            tahu: {
+                title: "Tahu Bulat",
+                imgId: "img-tahu",
+                portions: [
+                    { id: "tahu_3pcs", name: "Isi 3 pcs (Tanpa bumbu tabur)", price: 5000 },
+                    { id: "tahu_spesial_mentai", name: "Menu Spesial Toping Saus Mentai 4 pcs", price: 12000 }
+                ],
+                addons: [
+                    {
+                        id: "bumbu_tabur",
+                        name: "Bumbu Tabur Sepuasnya (+Rp 2.000)",
+                        price: 2000,
+                        type: "radio_options",
+                        options: [
+                            { id: "Pedas", label: "Pedas 🌶️" },
+                            { id: "Balado", label: "Balado 🌶️" },
+                            { id: "Jagung Bakar", label: "Jagung Bakar 🌽" },
+                            { id: "Asin", label: "Asin 🧂" }
+                        ]
+                    },
+                    {
+                        id: "chili_oil",
+                        name: "Chili Oil (+Rp 2.000)",
+                        price: 2000,
+                        type: "checkbox_simple"
+                    }
+                ]
+            },
+            sotong: {
+                title: "Sotong",
+                imgId: "img-sotong",
+                portions: [
+                    { id: "sotong_4pcs", name: "Isi 4 pcs (Tanpa toping)", price: 6000 },
+                    { id: "sotong_hemat_skm", name: "Menu Hemat Toping Susu Kental Manis 4 pcs", price: 8000 }
+                ],
+                addons: [
+                    {
+                        id: "glaze",
+                        name: "Glaze Lumer (+Rp 3.000)",
+                        price: 3000,
+                        type: "radio_options",
+                        options: [
+                            { id: "Tiramisu", label: "Tiramisu ☕" },
+                            { id: "Coklat", label: "Coklat 🍫" },
+                            { id: "Taro", label: "Taro 🧋" },
+                            { id: "Matcha", label: "Matcha 🍵" }
+                        ]
+                    },
+                    {
+                        id: "toping_meses",
+                        name: "Toping Meses (+Rp 2.000)",
+                        price: 2000,
+                        type: "radio_options",
+                        options: [
+                            { id: "Meses Coklat", label: "Meses Coklat 🍫" },
+                            { id: "Meses Warna Warni", label: "Meses Warna Warni 🌈" }
+                        ]
+                    },
+                    {
+                        id: "toping_premium",
+                        name: "Toping Premium (+Rp 3.000)",
+                        price: 3000,
+                        type: "radio_options",
+                        options: [
+                            { id: "Keju", label: "Keju 🧀" },
+                            { id: "Choco Chips", label: "Choco Chips 🍪" },
+                            { id: "Kacang", label: "Kacang Cincang 🥜" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // State Aplikasi
+        let cart = [];
+        let currentModalState = {
+            productType: null,
+            selectedPortion: null,
+            selectedAddons: {}, // addonId -> true/false
+            selectedFlavors: {}, // addonId -> selected flavor string
+            qty: 1
+        };
+
+        // Helper Format Rupiah
+        function formatRp(num) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
+        }
+
+        // Buka Modal Kustomisasi
+        function openCustomizeModal(productType) {
+            const product = menuData[productType];
+            if(!product) return;
+
+            currentModalState = {
+                productType: productType,
+                selectedPortion: product.portions[0],
+                selectedAddons: {},
+                selectedFlavors: {},
+                qty: 1
+            };
+
+            document.getElementById('modalTitle').innerText = "Kustomisasi " + product.title;
+            document.getElementById('modalProductType').value = productType;
+            document.getElementById('modalQty').innerText = "1";
+            document.getElementById('itemNote').value = "";
+
+            // Render Portion Radio Buttons
+            const portionContainer = document.getElementById('portionOptions');
+            portionContainer.innerHTML = product.portions.map((p, idx) => `
+                <label class="flex items-center justify-between p-3.5 border-2 border-slate-200 rounded-2xl cursor-pointer hover:border-amber-400 hover:bg-amber-50/30 transition-all">
+                    <div class="flex items-center gap-3">
+                        <input type="radio" name="portionRadio" value="${p.id}" ${idx === 0 ? 'checked' : ''} 
+                            onchange="updateModalPortion('${p.id}')" class="accent-amber-500 w-4 h-4">
+                        <span class="text-xs font-bold text-slate-800">${p.name}</span>
+                    </div>
+                    <span class="text-xs font-extrabold text-amber-600 font-display">${formatRp(p.price)}</span>
+                </label>
+            `).join('');
+
+            // Render Addons & Specific Flavor Choices
+            const addonsList = document.getElementById('addonsList');
+            addonsList.innerHTML = product.addons.map(addon => {
+                let flavorSelectionHtml = '';
+
+                if(addon.type === "radio_options") {
+                    flavorSelectionHtml = `
+                        <div id="flavorContainer_${addon.id}" class="hidden mt-2 pt-2 border-t border-slate-100 pl-7 space-y-1.5">
+                            <span class="text-[11px] font-bold text-slate-500 block">Pilih Rasa Varian:</span>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                ${addon.options.map((opt, oIdx) => `
+                                    <label class="flex items-center gap-2 p-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold cursor-pointer hover:bg-amber-50 transition-all">
+                                        <input type="radio" name="flavorRadio_${addon.id}" value="${opt.id}" ${oIdx === 0 ? 'checked' : ''}
+                                            onchange="updateModalFlavor('${addon.id}', '${opt.id}')" class="accent-amber-500">
+                                        <span>${opt.label}</span>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="p-3.5 border border-slate-200 bg-slate-50/60 rounded-2xl space-y-1">
+                        <label class="flex items-center justify-between cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox" id="chk_${addon.id}" onchange="toggleModalAddon('${addon.id}')" class="accent-amber-500 w-4 h-4 rounded-md">
+                                <span class="text-xs font-bold text-slate-800">${addon.name}</span>
+                            </div>
+                            <span class="text-xs font-bold text-amber-600">+${formatRp(addon.price)}</span>
+                        </label>
+                        ${flavorSelectionHtml}
+                    </div>
+                `;
+            }).join('');
+
+            // Pre-assign default flavor values if present
+            product.addons.forEach(addon => {
+                if(addon.type === "radio_options" && addon.options.length > 0) {
+                    currentModalState.selectedFlavors[addon.id] = addon.options[0].id;
+                }
+            });
+
+            recalculateModalTotal();
+
+            // Show Modal
+            const modal = document.getElementById('customizeModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.children[0].classList.remove('translate-y-full');
+            }, 10);
+        }
+
+        function closeCustomizeModal() {
+            const modal = document.getElementById('customizeModal');
+            modal.classList.add('opacity-0');
+            modal.children[0].classList.add('translate-y-full');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function updateModalPortion(portionId) {
+            const product = menuData[currentModalState.productType];
+            currentModalState.selectedPortion = product.portions.find(p => p.id === portionId);
+            recalculateModalTotal();
+        }
+
+        function toggleModalAddon(addonId) {
+            const chk = document.getElementById(`chk_${addonId}`);
+            const flavorContainer = document.getElementById(`flavorContainer_${addonId}`);
+
+            if(chk.checked) {
+                currentModalState.selectedAddons[addonId] = true;
+                if(flavorContainer) flavorContainer.classList.remove('hidden');
+            } else {
+                delete currentModalState.selectedAddons[addonId];
+                if(flavorContainer) flavorContainer.classList.add('hidden');
+            }
+            recalculateModalTotal();
+        }
+
+        function updateModalFlavor(addonId, flavorId) {
+            currentModalState.selectedFlavors[addonId] = flavorId;
+        }
+
+        function changeQty(delta) {
+            currentModalState.qty = Math.max(1, currentModalState.qty + delta);
+            document.getElementById('modalQty').innerText = currentModalState.qty;
+            recalculateModalTotal();
+        }
+
+        function recalculateModalTotal() {
+            let unitPrice = currentModalState.selectedPortion.price;
+            const product = menuData[currentModalState.productType];
+
+            Object.keys(currentModalState.selectedAddons).forEach(addonId => {
+                const addon = product.addons.find(a => a.id === addonId);
+                if(addon) unitPrice += addon.price;
+            });
+
+            const total = unitPrice * currentModalState.qty;
+            document.getElementById('modalTotalPrice').innerText = formatRp(total);
+        }
+
+        // Add item to cart with flying animation
+        function addToCart() {
+            const note = document.getElementById('itemNote').value.trim();
+            const product = menuData[currentModalState.productType];
+
+            // Build detailed array of choices
+            const addonDetails = [];
+            Object.keys(currentModalState.selectedAddons).forEach(addonId => {
+                const addon = product.addons.find(a => a.id === addonId);
+                if(!addon) return;
+
+                if(addon.type === "radio_options") {
+                    const chosenFlavor = currentModalState.selectedFlavors[addonId];
+                    addonDetails.push(`${addon.name.split(' (+')[0]} [Rasa: ${chosenFlavor}]`);
+                } else {
+                    addonDetails.push(addon.name.split(' (+')[0]);
+                }
+            });
+
+            let unitPrice = currentModalState.selectedPortion.price;
+            Object.keys(currentModalState.selectedAddons).forEach(addonId => {
+                const addon = product.addons.find(a => a.id === addonId);
+                if(addon) unitPrice += addon.price;
+            });
+
+            const cartItem = {
+                id: Date.now(),
+                title: product.title,
+                portionName: currentModalState.selectedPortion.name,
+                addons: addonDetails,
+                note: note,
+                unitPrice: unitPrice,
+                qty: currentModalState.qty,
+                totalPrice: unitPrice * currentModalState.qty,
+                imgId: product.imgId
+            };
+
+            cart.push(cartItem);
+            updateCartBadge();
+            
+            triggerFlyToCartAnimation(product.imgId);
+            closeCustomizeModal();
+            showToast(`" ${product.title} " berhasil ditambahkan!`);
+        }
+
+        // Flying animation from menu image to cart icon
+        function triggerFlyToCartAnimation(imgElementId) {
+            const imgEl = document.getElementById(imgElementId);
+            const cartBtn = document.getElementById('cartBtn');
+
+            if(!imgEl || !cartBtn) return;
+
+            const imgRect = imgEl.getBoundingClientRect();
+            const cartRect = cartBtn.getBoundingClientRect();
+
+            const flyer = document.createElement('div');
+            flyer.className = 'flying-item';
+            flyer.style.backgroundImage = `url('${imgEl.src}')`;
+            flyer.style.top = `${imgRect.top + imgRect.height / 2 - 30}px`;
+            flyer.style.left = `${imgRect.left + imgRect.width / 2 - 30}px`;
+
+            document.body.appendChild(flyer);
+
+            setTimeout(() => {
+                flyer.style.top = `${cartRect.top + cartRect.height / 2 - 15}px`;
+                flyer.style.left = `${cartRect.left + cartRect.width / 2 - 15}px`;
+                flyer.style.width = '20px';
+                flyer.style.height = '20px';
+                flyer.style.opacity = '0.3';
+            }, 20);
+
+            setTimeout(() => {
+                flyer.remove();
+                const badge = document.getElementById('cartBadge');
+                badge.classList.add('animate-bump');
+                setTimeout(() => badge.classList.remove('animate-bump'), 400);
+            }, 800);
+        }
+
+        function updateCartBadge() {
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartBadge').innerText = totalQty;
+        }
+
+        // Open Checkout Page Modal
+        function openCheckoutModal() {
+            const customerName = document.getElementById('customerNameInput').value.trim();
+            if(!customerName) {
+                alert("Silakan isi Nama Pemesan di bagian banner atas terlebih dahulu!");
+                document.getElementById('customerNameInput').focus();
+                return;
+            }
+
+            if(cart.length === 0) {
+                alert("Keranjang belanja Anda masih kosong! Silakan pilih menu terlebih dahulu.");
+                return;
+            }
+
+            document.getElementById('checkoutCustomerName').innerText = customerName;
+
+            // Render Cart Items List
+            const cartItemsList = document.getElementById('cartItemsList');
+            let grandTotal = 0;
+
+            cartItemsList.innerHTML = cart.map((item, index) => {
+                grandTotal += item.totalPrice;
+                const addonsStr = item.addons.length > 0 ? `<p class="text-[11px] text-amber-700 font-medium mt-0.5"><i class="fa-solid fa-plus text-[9px]"></i> ${item.addons.join(', ')}</p>` : '';
+                const noteStr = item.note ? `<p class="text-[11px] text-slate-400 italic">Catatan: "${item.note}"</p>` : '';
+
+                return `
+                    <div class="py-2.5 flex justify-between items-start gap-2">
+                        <div class="space-y-0.5">
+                            <p class="font-bold text-slate-900 text-xs sm:text-sm">${item.title} <span class="text-slate-500 font-normal">(${item.portionName})</span></p>
+                            ${addonsStr}
+                            ${noteStr}
+                            <p class="text-xs text-slate-500 font-semibold">${item.qty} x ${formatRp(item.unitPrice)}</p>
+                        </div>
+                        <div class="text-right flex flex-col items-end gap-1">
+                            <span class="font-bold text-xs sm:text-sm text-slate-900 font-display">${formatRp(item.totalPrice)}</span>
+                            <button onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-700 text-xs p-1">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('checkoutGrandTotal').innerText = formatRp(grandTotal);
+
+            const modal = document.getElementById('checkoutModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkoutModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartBadge();
+            if(cart.length === 0) {
+                closeCheckoutModal();
+                showToast("Keranjang sekarang kosong.");
+            } else {
+                openCheckoutModal();
+            }
+        }
+
+        // Toggle Payment Text Details
+        function togglePaymentInfo() {
+            const selected = document.querySelector('input[name="paymentMethod"]:checked').value;
+            const detailEl = document.getElementById('paymentTextDetail');
+
+            if(selected === 'Tunai (Cash)') {
+                detailEl.innerText = "Bayar tunai secara langsung saat menerima pesanan (COD / Ambil di tempat).";
+            } else if(selected === 'QRIS') {
+                detailEl.innerText = "Barcode QRIS akan dikirimkan oleh penjual via chat WhatsApp setelah Anda mengirimkan pesanan ini.";
+            } else if(selected === 'Transfer Bank') {
+                detailEl.innerText = "Nomor Rekening Bank penjual akan dikirimkan secara otomatis via chat WhatsApp setelah pesanan dibuat.";
+            }
+        }
+
+        // Send Order Direct to WhatsApp
+        function sendOrderToWhatsApp() {
+            const customerName = document.getElementById('customerNameInput').value.trim();
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+            if(!customerName) {
+                alert("Nama pemesan tidak boleh kosong!");
+                return;
+            }
+
+            if(cart.length === 0) {
+                alert("Keranjang kosong!");
+                return;
+            }
+
+            let grandTotal = 0;
+            let orderItemsText = "";
+
+            cart.forEach((item, idx) => {
+                grandTotal += item.totalPrice;
+                orderItemsText += `${idx + 1}. *${item.title}*\n`;
+                orderItemsText += `   • Porsi: ${item.portionName}\n`;
+                if(item.addons.length > 0) {
+                    orderItemsText += `   • Varian/Toping: ${item.addons.join(', ')}\n`;
+                }
+                if(item.note) {
+                    orderItemsText += `   • Catatan: _${item.note}_\n`;
+                }
+                orderItemsText += `   • Qty: ${item.qty} x ${formatRp(item.unitPrice)} = *${formatRp(item.totalPrice)}*\n\n`;
+            });
+
+            // Format Pesan WhatsApp yang Rapi & Jelas
+            let message = `Halo, saya mau beli jualan Tahu Bulat & Sotong nya ya! 😋\n\n`;
+            message += `📋 *-- DATA PEMESAN --*\n`;
+            message += `👤 *Nama Pemesan:* ${customerName}\n`;
+            message += `💳 *Metode Pembayaran:* ${paymentMethod}\n\n`;
+            message += `🛍️ *-- RINCIAN PESANAN --*\n`;
+            message += orderItemsText;
+            message += `------------------------------------\n`;
+            message += `💰 *TOTAL HARGA:* *${formatRp(grandTotal)}*\n\n`;
+            message += `Mohon segera diproses ya, terima kasih banyak! 🙏✨`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const waUrl = `https://wa.me/${62895322314064}?text=${encodedMessage}`;
+
+            window.open(waUrl, '_blank');
+        }
+
+        // Show Toast Helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
